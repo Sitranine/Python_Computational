@@ -1,0 +1,5 @@
+## RCS is the Radar Cross Section of an Object. It is a critical attribute to optimize for in development of stealth vehicle platforms and a critical parameter to understand 
+## if one is to ensure Electronic Warfare resilience for any warfighter, manned or unmanned.
+
+print ("Welcome to the Dynamic Radar Cross Section Model!")
+
