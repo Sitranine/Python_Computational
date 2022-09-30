@@ -1,0 +1,10 @@
+import numpy as np
+import matplotlib as mat
+
+A=np.array([1, 4, 5])
+B=np.array([[1,4,5],[3,3,3],[2,4,5]])
+print(A)
+print(B)
+
+C=np.matmul(B,A)
+print(C)
