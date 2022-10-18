@@ -60,4 +60,5 @@ E=29007547.5467502
 k_b=(A_d*A_t*E)/(A_d*l_t+A_t*l_d)
 M_B=m*z_cg
 alpha=conv_deg((M_B/k_b))
-print("Bolt deflection angle is "+str(alpha))
+print(k_b)
+print("Bolt deflection angle is  "+str(alpha))
