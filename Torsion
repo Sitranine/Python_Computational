@@ -4,6 +4,9 @@ import matplotlib as plt
 import math as m 
 def sqr(x):
     return x**2
+pi=3.14159264
+def conv_deg(x):
+    return x*(180/pi)
 
 print("Torsion is computed for a flat plate in which the thin cross section is experiencing twisting moment.")
 print("Please enter thickness and height for a plate of continuous cross section")
@@ -16,7 +19,6 @@ g=386.0885 #gravitational constant
 shear_mod=3770 #shear modulus in ksi
 shear_yield=30 #shear strength in ksi 
 norm_yield=35  #normal strength in ksi
-pi=3.14159264
 d=0.20 #Bolt clearance hole diameter
 
 ## TORSIONAL STRESS ##
@@ -43,7 +45,19 @@ if n_b<1:
 else:
     print("The factor of safety  under bearing load is "+str(n_b)) 
 
-
-
 ## FASTENER STIFFNESS AND DEFLECTION ##
-
+h=0.19 #Bolt head clamping face to plate rear face
+t_2=0.07 #washer thickness
+d=0.1891
+l=h+t_2/2
+L=h+1.5*d
+L_T=2*d+0.25
+l_d=L-L_T
+l_t=l-l_d
+A_d=(pi*sqr(d))/4
+A_t=0.0175
+E=29007547.5467502
+k_b=(A_d*A_t*E)/(A_d*l_t+A_t*l_d)
+M_B=m*z_cg
+alpha=conv_deg((M_B/k_b))
+print("Bolt deflection angle is "+str(alpha))
