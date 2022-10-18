@@ -1,3 +1,49 @@
+from turtle import end_fill
 import numpy as num
 import matplotlib as plt
+import math as m 
+def sqr(x):
+    return x**2
+
+print("Torsion is computed for a flat plate in which the thin cross section is experiencing twisting moment.")
+print("Please enter thickness and height for a plate of continuous cross section")
+th=0.1285 #plate thickness
+h=3.47 #plate height
+z_cg=1.53 #z or lateral center of gravity coordinate
+y_cg=1.76 #y or vertical center of gravity coordinate
+m=6.69 #assembly mass in lbs (unit of weight, already a force)
+g=386.0885 #gravitational constant
+shear_mod=3770 #shear modulus in ksi
+shear_yield=30 #shear strength in ksi 
+norm_yield=35  #normal strength in ksi
+pi=3.14159264
+d=0.20 #Bolt clearance hole diameter
+
+## TORSIONAL STRESS ##
+T=m*z_cg
+print(str(T)+" in*lbs")
+L=h
+c=th
+shear=((3*T)/(L*sqr(c)))/1000 #torsional shear
+print("The maximum shear stress in the plate is " +str(shear)+" ksi")
+theta= (shear/(shear_mod*c))*(180/pi) #angle of twist
+print("The per-unit-length angle of twist is "+str(theta)+" degrees per inch")
+if shear>shear_yield:
+    print("The component fails under torsional load")
+else:
+    n_T=shear_yield/shear
+    print("The component factor of safety in torsion is "+str(n_T))
+
+## BEARING STRESS ##
+A_h=pi*d*c
+norm_b=0.25*m/A_h
+n_b=(norm_yield*1000)/norm_b
+if n_b<1:
+    print("The component deforms under bearing load")
+else:
+    print("The factor of safety  under bearing load is "+str(n_b)) 
+
+
+
+## FASTENER STIFFNESS AND DEFLECTION ##
 
