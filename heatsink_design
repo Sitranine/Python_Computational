@@ -1,0 +1,56 @@
+## THE INTENT OF THIS PROGRAM IS TO PLOT PLANAR FIN AND WALL GEOMETRY FOR A SET OF ARRAYED, HOT OBJECTS FOR MAXIMAL HEATSINKING EFFECT ##
+## THE DATA OBJECT INPUT IS A DXF OR CSV FILE DESCRIBING THE PLANAR CROSS SECTIONS OUTPUTTING HEAT FLUX OR KNOWN TEMPERATURE AT THEIR OUTER BOUNDARY ##
+## A FINITE ELEMENT SOLVER GENERATES A HEAT FLUX PLOT AND COMPUTES A CONVECTIVE, DISSIPATIVE EFFECT BASED ON A INPUTTED, SINGLE MATERIAL CONDUCTIVITY ##
+## OUTER FIN GEOMETRY IS CREATED, TAKING INTO ACCOUNT AN INPUTTED OUTWARD PROJECTION DIMENSION **
+## RESULTING BODY IS SAVED AS A DXF, IN WHICH (NOTIONALLY) THE ARRAYED OBJECTS NEST ##
+
+import matplotlib as mat
+from matplotlib import pyplot as plt
+import numpy as np
+import math 
+
+pi=3.14159265
+def convdeg(x):
+    return x*(180/pi)
+def convkelv(x):
+    return x+273.15
+def convcels(x):
+    return (x-32)*(5/9)
+def convfahr(x):
+    return x*(9/5)+32
+
+print("Welcome to the arrayed-object heatsink generator")
+print("Using a thermal resistance network concept and standard formulae for heatsink performance, this program will output planar (cross sectional) heatsink geometry")
+print("The program accepts heated, arrayed object geometry in .dxf and .csv formats")
+
+T_surf=input("Enter the peak, steady temperature of the heated object's exterior   ")
+qty=input("Enter the quantity of linearly arranged heated objects")
+width=input("Enter the in-plane width of each object.")
+dist=input("Enter the distance between these linarly arranged objects.")
+
+class al: ##aluminum 6061-t6 material properties
+    def __init__(get):
+        get.k=152 ## W/(mK) (Watts per meter kelvin)
+        get.rho=2.7 ##g/cc (grams per cubic centimeter)
+getal=al()
+
+print(getal.rho)
+
+print(math.cosh(180))
+
+##class fin: ##Heatsink fin attributes, governing equations, parameters
+
+
+
+## HEATSINK PARAMETER DECOMP ##
+
+
+
+## HEATSINK PARAMETER RECOMP ##
+
+
+## HEATSINK PARAMETER FROM SCRATCH ##
+
+
+
+
