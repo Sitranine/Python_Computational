@@ -4,6 +4,9 @@
 ## OUTER FIN GEOMETRY IS CREATED, TAKING INTO ACCOUNT AN INPUTTED OUTWARD PROJECTION DIMENSION **
 ## RESULTING BODY IS SAVED AS A DXF, IN WHICH (NOTIONALLY) THE ARRAYED OBJECTS NEST ##
 
+##print(getal.rho) --- here's how to call a class
+#print(math.cosh(180)) --- here's how to call the math library
+
 import matplotlib as mat
 from matplotlib import pyplot as plt
 import numpy as np
@@ -18,15 +21,38 @@ def convcels(x):
     return (x-32)*(5/9)
 def convfahr(x):
     return x*(9/5)+32
+def conv_m(x):
+    return x*0.0254
+def conv_mm(x):
+    return x*(1/25.4)
 
-print("Welcome to the arrayed-object heatsink generator")
-print("Using a thermal resistance network concept and standard formulae for heatsink performance, this program will output planar (cross sectional) heatsink geometry")
-print("The program accepts heated, arrayed object geometry in .dxf and .csv formats")
+print("Welcome to the linearly arranged object heatsink generator")
+print("Using a thermal resistance circuit concept and standard formulae for heatsink performance, this program will prescribe and plot planar heatsink geometry")
+print("The program queries for basic geometric and heating parameters of the arrayed objects. It then asks for some constraints and outputs the effective heatsink geoemtry")
+print("HEATSINK ELEMENTS ARE RESTRICTED TO RECNTAGULAR FIN. LATER REVISION WILL ADD PARABOLIC AND TRIANGULAR FIN TYPES AND PERTINENT SELECTION TREES")
 
-T_surf=input("Enter the peak, steady temperature of the heated object's exterior   ")
-qty=input("Enter the quantity of linearly arranged heated objects")
-width=input("Enter the in-plane width of each object.")
-dist=input("Enter the distance between these linarly arranged objects.")
+q_h=input("Is there a constrained heatsink fin height to which you'd like to design?:   ")
+if q_h.lower()=="yes":
+    L=input("Please input the desired fin height:  ")
+elif q_h.lower()=="no":
+    L=0
+
+print("The heatsink is most prefferably machined by a single tool. This would be a single size of ball or flat endmill.")
+q_mill=input("Would you like to specify an endmill size?(yes/no):  ")
+if q_mill.lower()=="yes":
+    mill_choice=input("Please enter an endmill type (ball/flat):  ")
+    if mill_choice.lower()=="ball":
+        fillet=input("Please enter the ball endmill radius:  ")
+        r=fillet
+    elif mill_choice.lower()=="flat":
+        r=input("Please enter the ball endmill radius:  ")
+elif q_mill.lower()=="no":
+    r=0
+
+T_surf=input("Enter the peak, steady temperature of the heated object's exterior in degrees Celsius   ")
+qty=4   #input("Enter the quantity of linearly arranged heated objects")
+width=conv_mm(0.785)   #conv_m(input("Enter the in-plane width of each object."))
+dist=0.59   #conv_m(input("Enter the distance between these linearly arranged objects."))
 
 class al: ##aluminum 6061-t6 material properties
     def __init__(get):
@@ -34,11 +60,24 @@ class al: ##aluminum 6061-t6 material properties
         get.rho=2.7 ##g/cc (grams per cubic centimeter)
 getal=al()
 
-print(getal.rho)
-
-print(math.cosh(180))
-
-##class fin: ##Heatsink fin attributes, governing equations, parameters
+class endmill: ## Since the heatsink is cosntrained to have rectangular, vertical fins and be as "machineable" as possible. The machine tool (endmill) geometry is a pertinent parameter.
+    def __init__(mill):
+        mill.r=r
+    
+    
+class fin: ##Heatsink fin attributes, governing equations, parameters
+    def __init__(fin):
+        fin.h=L
+        fin.fil=r
+        ##fin.space=
+        fin.th=conv_mm(0.060) ##could be a vector input for which output is heat transfer
+        ##fin.m= somebullshit function of height and thickness set point for rectangular fin
+        fin.lc=L+fin.th/2 ##characteristic length
+        ## fin spacing
+        ##fin.nu=   #fin efficiency. this is a function of m and characteristic length
+        ##fin.A_s= #### surface area
+        
+        
 
 
 
@@ -49,7 +88,7 @@ print(math.cosh(180))
 ## HEATSINK PARAMETER RECOMP ##
 
 
-## HEATSINK PARAMETER FROM SCRATCH ##
+## IDEAL HEATSINK GEOEMTRY: UNCONSTRAINED GAP ##
 
 
 
