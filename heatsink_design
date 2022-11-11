@@ -45,26 +45,46 @@ if q_mill.lower()=="yes":
         fillet=input("Please enter the ball endmill radius:  ")
         r=fillet
     elif mill_choice.lower()=="flat":
-        r=input("Please enter the ball endmill radius:  ")
+        r=input("Please enter the flat endmill radius:  ")
 elif q_mill.lower()=="no":
     r=0
 
 T_surf=input("Enter the peak, steady temperature of the heated object's exterior in degrees Celsius   ")
 qty=4   #input("Enter the quantity of linearly arranged heated objects")
-width=conv_mm(0.785)   #conv_m(input("Enter the in-plane width of each object."))
-dist=0.59   #conv_m(input("Enter the distance between these linearly arranged objects."))
+width=conv_mm(0.790)   #conv_m(input("Enter the in-plane width of each object."))
+length=conv_mm(0.755)
+dist=conv_mm(1.59)   #conv_m(input("Enter the distance between these linearly arranged objects."))
 
 class al: ##aluminum 6061-t6 material properties
     def __init__(get):
-        get.k=152 ## W/(mK) (Watts per meter kelvin)
+        get.k=167 ## W/(mK) (Watts per meter kelvin)
         get.rho=2.7 ##g/cc (grams per cubic centimeter)
+        get.cp=0.896 ##J/gC
 getal=al()
 
-class endmill: ## Since the heatsink is cosntrained to have rectangular, vertical fins and be as "machineable" as possible. The machine tool (endmill) geometry is a pertinent parameter.
-    def __init__(mill):
-        mill.r=r
-    
-    
+## THERMAL PASTE PROPERTIES ##
+k_paste=0.79 #W/mk  
+       
+## TEMP BOUNDARY CONDITIONS KNOWN - SOLVE FOR GEOMETRY ##
+        
+
+
+
+delT=10 ##DESIRED temp drop in kelvin
+A_c=width*length*qty    ##SUMMED AMP CONTACT AREA 
+qcond_x=getal.k*A_c*delT
+Rcond_x=qcond_x 
+
+
+
+## OLD HEATSINK PARAMETER DECOMP ##
+
+
+
+## NEW HEATSINK PARAMETER RECOMP ##
+
+
+## IDEAL HEATSINK GEOEMTRY: HEIGHT AND THICKNESS CALCULATION ##
 class fin: ##Heatsink fin attributes, governing equations, parameters
     def __init__(fin):
         fin.h=L
@@ -76,20 +96,6 @@ class fin: ##Heatsink fin attributes, governing equations, parameters
         ## fin spacing
         ##fin.nu=   #fin efficiency. this is a function of m and characteristic length
         ##fin.A_s= #### surface area
-        
-        
-
-
-
-## HEATSINK PARAMETER DECOMP ##
-
-
-
-## HEATSINK PARAMETER RECOMP ##
-
-
-## IDEAL HEATSINK GEOEMTRY: UNCONSTRAINED GAP ##
-
 
 
 
