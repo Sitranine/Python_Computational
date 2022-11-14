@@ -50,11 +50,12 @@ elif q_mill.lower()=="no":
     r=0
 
 T_surf=input("Enter the peak, steady temperature of the heated object's exterior in degrees Celsius   ")
-qty=4   #input("Enter the quantity of linearly arranged heated objects")
-width=conv_mm(0.790)   #conv_m(input("Enter the in-plane width of each object."))
-length=conv_mm(0.755)
-dist=conv_mm(1.59)   #conv_m(input("Enter the distance between these linearly arranged objects."))
-
+width=conv_mm(0.76)
+length=conv_mm(0.79)
+qty=4 #input("Enter the quantity of linearly arranged heated objects")
+A_c=width*length
+spacing=conv_mm(0.59)
+         
 class al: ##aluminum 6061-t6 material properties
     def __init__(get):
         get.k=167 ## W/(mK) (Watts per meter kelvin)
@@ -62,18 +63,23 @@ class al: ##aluminum 6061-t6 material properties
         get.cp=0.896 ##J/gC
 getal=al()
 
+
+
 ## THERMAL PASTE PROPERTIES ##
-k_paste=0.79 #W/mk  
+k_paste=80 #W/mk  
        
 ## TEMP BOUNDARY CONDITIONS KNOWN - SOLVE FOR GEOMETRY ##
-        
+
+delT_paste=1
+q_cond_paste=k_paste*4*A_c*(delT_paste/conv_mm(0.001))
+print(q_cond_paste)
 
 
 
-delT=10 ##DESIRED temp drop in kelvin
-A_c=width*length*qty    ##SUMMED AMP CONTACT AREA 
-qcond_x=getal.k*A_c*delT
-Rcond_x=qcond_x 
+
+
+
+
 
 
 
