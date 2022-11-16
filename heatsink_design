@@ -26,8 +26,8 @@ def conv_mm(x):
     return float(x*(1/25.4))
 
 print("Welcome to the linearly arranged object heatsink generator")
-print("Using a thermal resistance circuit concept and standard formulae for heatsink performance, this program will prescribe and plot planar heatsink geometry")
-print("The program queries for basic geometric and heating parameters of the arrayed objects. It then asks for some constraints and outputs the effective heatsink geoemtry")
+print("The program uses a series of conduction and convection governing equation with respect to fin geometry and natural convection")
+print("The program queries for basic geometric and heating parameters of the arrayed objects. It then asks for some constraints and outputs the effective heatsink dissipation")
 print("HEATSINK ELEMENTS ARE RESTRICTED TO RECTAbGULAR FIN. LATER REVISION WILL ADD PARABOLIC AND TRIANGULAR FIN TYPES AND PERTINENT SELECTION TREES")
 
 print("The heatsink is most prefferably machined by a single tool. This would be a single size of ball or flat endmill.")
@@ -42,12 +42,13 @@ if q_mill.lower()=="yes":
 elif q_mill.lower()=="no":
     r=0
     
-n_obj=input("Enter the number of heated objects being dissipated by the heatsink:   ")
+n_obj=float(input("Enter the number of heated objects being dissipated by the heatsink:   "))
+spacing=conv_m(float((input("Enter the spacing distance of the object array:  "))))
 T_surf=float(input("Enter the steady temperature of the heated object's exterior in degrees Celsius:   "))
 T_inf=float(input("What is ambient fluid temperature?:  "))
 width=conv_m(0.76)
 length=conv_m(0.79)
-A_c=width*length
+A_c=length*spacing*(n_obj-1)+n_obj*width*length
          
 class al: ##aluminum 6061-t6 material properties
     def __init__(get):
@@ -58,30 +59,36 @@ getal=al()
  
 ## TEMP BOUNDARY CONDITIONS KNOWN - EQUATIONS FED LENGTH AND THICKNESS AREA TO CREATE 3D COUNTOUR PLOT FOR ANALYSIS ##
 ## q_fin=f(t,L,S)
-k_paste=80 #W/mk  THERMAL PASTE conductivity ##
+k_paste=31.4 #W/mk  THERMAL PASTE conductivity ##
 delT_paste=1 #DESIRED PASTE CONDUCTION DELTA T IN CELSIUS OR KELVIN. UNIT TRIVIAL, QUANTITY IS A DIFFERENCE.
 q_cond_paste=k_paste*int(n_obj)*A_c*(delT_paste/conv_m(0.001))
 
 delT_base=10 #DESIRED BASE CONDUCTION DELTA T IN CELSIUS OR KELVIN. UNIT TRIVIAL, QUANTITY IS A DIFFERENCE.
 t_base=conv_m(0.090)
-q_cond_base=getal.k*A_c*(delT_base/conv_m(t_base))
+q_cond_base=getal.k*A_c*(delT_base/(t_base))
 T_base=float(T_surf)-delT_paste-delT_base
 
 q_h=input("Is there a constrained heatsink fin height to which you'd like to design?:   ")
 if q_h.lower()=="yes":
-    L=input("Please input the desired fin height:  ")
+    L=float(input("Please input the desired fin height:  "))
 elif q_h.lower()=="no":
     L=conv_m(0.40) ##np.linspace(0, 1, 100)
-
 
 n=float(input("Enter the desired fin count:  "))  ##THE FIN COUNT 
 S=float(input("Enter the desired fin spacing:  "))
 q_fin_nom=q_cond_base/int(n)
 h=4864.14*getal.k*m.pow(float(S),3)
-t=conv_m(0.030) ##np.linspace(0, 0.060, 100)
+t=conv_m(0.048) ##np.linspace(0, 0.060, 100)
 A_s=(2*L*(width+t))+t*width
 L_c=L+t/2
-m_=m.tanh(((m.sqrt((2*h)/(h*t)))*(L_c))/((((2*h)/(h*t)))*(L_c)))
-q_fin=n*h*A_s*(T_base-T_inf)
+nu_fin=(m.tanh((m.sqrt((2*h)/(h*t)))*(L_c)))/((((2*h)/(h*t)))*(L_c))
+q_fin=n*h*A_s*nu_fin*(T_base-T_inf)
+print("The fin efficiency is  "+str(nu_fin))
 print("The computed fin heat dissipation is  "+ str(q_fin)+" Watts")
 print("The required total fin heat dissipation is  "+str(q_fin_nom)+" Watts")
+if q_fin>q_fin_nom:
+    print("All inputted parameters define a satisfactory, effective heatsink.")
+elif q_fin_nom>q_fin:
+    print("The heatsink does not dissipate effecitvely enough")
+    
+    
