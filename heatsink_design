@@ -1,41 +1,34 @@
-## THE INTENT OF THIS PROGRAM IS TO PLOT PLANAR FIN AND WALL GEOMETRY FOR A SET OF ARRAYED, HOT OBJECTS FOR MAXIMAL HEATSINKING EFFECT ##
-## THE DATA OBJECT INPUT IS A DXF OR CSV FILE DESCRIBING THE PLANAR CROSS SECTIONS OUTPUTTING HEAT FLUX OR KNOWN TEMPERATURE AT THEIR OUTER BOUNDARY ##
-## A FINITE ELEMENT SOLVER GENERATES A HEAT FLUX PLOT AND COMPUTES A CONVECTIVE, DISSIPATIVE EFFECT BASED ON A INPUTTED, SINGLE MATERIAL CONDUCTIVITY ##
-## OUTER FIN GEOMETRY IS CREATED, TAKING INTO ACCOUNT AN INPUTTED OUTWARD PROJECTION DIMENSION **
-## RESULTING BODY IS SAVED AS A DXF, IN WHICH (NOTIONALLY) THE ARRAYED OBJECTS NEST ##
+## THIS PROGRAM GENERATES A MULTIVARIABLE CONTOUR PLOT OF HEATSINK FIN THICKNESS AND LENGTH, ASSUMING CERTAIN TEMPERATURE VALUES AS INPUTS AND OTHER GEOEMTRY ##
+## THE PROGRAM MAY BE RESTRUCTRED IN FUTURE AS A SET OF CLASSES ACTING UPON ARRAY VARIABLES, OR MAY BE ADAPTED TO DIFFERENT GOVERNING EQUATIONS ##
 
 ##print(getal.rho) --- here's how to call a class
 #print(math.cosh(180)) --- here's how to call the math library
 
 import matplotlib as mat
 from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d as plt3d
 import numpy as np
-import math 
+import math as m
+import sympy as sy
 
 pi=3.14159265
 def convdeg(x):
-    return x*(180/pi)
+    return float(x*(180/pi))
 def convkelv(x):
-    return x+273.15
+    return float(x+273.15)
 def convcels(x):
-    return (x-32)*(5/9)
+    return float((x-32)*(5/9))
 def convfahr(x):
-    return x*(9/5)+32
+    return float(x*(9/5)+32)
 def conv_m(x):
-    return x*0.0254
+    return float(x*0.0254)
 def conv_mm(x):
-    return x*(1/25.4)
+    return float(x*(1/25.4))
 
 print("Welcome to the linearly arranged object heatsink generator")
 print("Using a thermal resistance circuit concept and standard formulae for heatsink performance, this program will prescribe and plot planar heatsink geometry")
 print("The program queries for basic geometric and heating parameters of the arrayed objects. It then asks for some constraints and outputs the effective heatsink geoemtry")
-print("HEATSINK ELEMENTS ARE RESTRICTED TO RECNTAGULAR FIN. LATER REVISION WILL ADD PARABOLIC AND TRIANGULAR FIN TYPES AND PERTINENT SELECTION TREES")
-
-q_h=input("Is there a constrained heatsink fin height to which you'd like to design?:   ")
-if q_h.lower()=="yes":
-    L=input("Please input the desired fin height:  ")
-elif q_h.lower()=="no":
-    L=0
+print("HEATSINK ELEMENTS ARE RESTRICTED TO RECTAbGULAR FIN. LATER REVISION WILL ADD PARABOLIC AND TRIANGULAR FIN TYPES AND PERTINENT SELECTION TREES")
 
 print("The heatsink is most prefferably machined by a single tool. This would be a single size of ball or flat endmill.")
 q_mill=input("Would you like to specify an endmill size?(yes/no):  ")
@@ -48,13 +41,13 @@ if q_mill.lower()=="yes":
         r=input("Please enter the flat endmill radius:  ")
 elif q_mill.lower()=="no":
     r=0
-
-T_surf=input("Enter the peak, steady temperature of the heated object's exterior in degrees Celsius   ")
-width=conv_mm(0.76)
-length=conv_mm(0.79)
-qty=4 #input("Enter the quantity of linearly arranged heated objects")
+    
+n_obj=input("Enter the number of heated objects being dissipated by the heatsink:   ")
+T_surf=float(input("Enter the steady temperature of the heated object's exterior in degrees Celsius:   "))
+T_inf=float(input("What is ambient fluid temperature?:  "))
+width=conv_m(0.76)
+length=conv_m(0.79)
 A_c=width*length
-spacing=conv_mm(0.59)
          
 class al: ##aluminum 6061-t6 material properties
     def __init__(get):
@@ -62,46 +55,33 @@ class al: ##aluminum 6061-t6 material properties
         get.rho=2.7 ##g/cc (grams per cubic centimeter)
         get.cp=0.896 ##J/gC
 getal=al()
+ 
+## TEMP BOUNDARY CONDITIONS KNOWN - EQUATIONS FED LENGTH AND THICKNESS AREA TO CREATE 3D COUNTOUR PLOT FOR ANALYSIS ##
+## q_fin=f(t,L,S)
+k_paste=80 #W/mk  THERMAL PASTE conductivity ##
+delT_paste=1 #DESIRED PASTE CONDUCTION DELTA T IN CELSIUS OR KELVIN. UNIT TRIVIAL, QUANTITY IS A DIFFERENCE.
+q_cond_paste=k_paste*int(n_obj)*A_c*(delT_paste/conv_m(0.001))
+
+delT_base=10 #DESIRED BASE CONDUCTION DELTA T IN CELSIUS OR KELVIN. UNIT TRIVIAL, QUANTITY IS A DIFFERENCE.
+t_base=conv_m(0.090)
+q_cond_base=getal.k*A_c*(delT_base/conv_m(t_base))
+T_base=float(T_surf)-delT_paste-delT_base
+
+q_h=input("Is there a constrained heatsink fin height to which you'd like to design?:   ")
+if q_h.lower()=="yes":
+    L=input("Please input the desired fin height:  ")
+elif q_h.lower()=="no":
+    L=conv_m(0.40) ##np.linspace(0, 1, 100)
 
 
-
-## THERMAL PASTE PROPERTIES ##
-k_paste=80 #W/mk  
-       
-## TEMP BOUNDARY CONDITIONS KNOWN - SOLVE FOR GEOMETRY ##
-
-delT_paste=1
-q_cond_paste=k_paste*4*A_c*(delT_paste/conv_mm(0.001))
-print(q_cond_paste)
-
-
-
-
-
-
-
-
-
-
-## OLD HEATSINK PARAMETER DECOMP ##
-
-
-
-## NEW HEATSINK PARAMETER RECOMP ##
-
-
-## IDEAL HEATSINK GEOEMTRY: HEIGHT AND THICKNESS CALCULATION ##
-class fin: ##Heatsink fin attributes, governing equations, parameters
-    def __init__(fin):
-        fin.h=L
-        fin.fil=r
-        ##fin.space=
-        fin.th=conv_mm(0.060) ##could be a vector input for which output is heat transfer
-        ##fin.m= somebullshit function of height and thickness set point for rectangular fin
-        fin.lc=L+fin.th/2 ##characteristic length
-        ## fin spacing
-        ##fin.nu=   #fin efficiency. this is a function of m and characteristic length
-        ##fin.A_s= #### surface area
-
-
-
+n=float(input("Enter the desired fin count:  "))  ##THE FIN COUNT 
+S=float(input("Enter the desired fin spacing:  "))
+q_fin_nom=q_cond_base/int(n)
+h=4864.14*getal.k*m.pow(float(S),3)
+t=conv_m(0.030) ##np.linspace(0, 0.060, 100)
+A_s=(2*L*(width+t))+t*width
+L_c=L+t/2
+m_=m.tanh(((m.sqrt((2*h)/(h*t)))*(L_c))/((((2*h)/(h*t)))*(L_c)))
+q_fin=n*h*A_s*(T_base-T_inf)
+print("The computed fin heat dissipation is  "+ str(q_fin)+" Watts")
+print("The required total fin heat dissipation is  "+str(q_fin_nom)+" Watts")
