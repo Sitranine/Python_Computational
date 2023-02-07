@@ -1,0 +1,58 @@
+## FAST FOURIER TRANSFORM AND POWER SPECTRUM DENSITY PLOTTER FOR ANY GIVEN CSV OR EXCEL INPUT ##
+## USE TO IDENTIFY FREQUENCIES, AMPLITUDE, AND POWERS OF CONCERN IN OSCILLATING MECHANISMS AND STRUCTURES ##
+
+import pandas as pd
+import numpy as np
+import sympy as sy
+import matplotlib.pyplot as plt
+import matplotlib 
+from mpl_toolkits import mplot3d as plt3d
+import scipy.signal
+
+plt.style.use('seaborn-poster')
+
+xlread_path= r"C:\Users\skasturey3-gtri\Desktop\pyFFT Workbook\RAND_DATA.csv"
+df=pd.read_csv(xlread_path)
+print(df)
+time=df.time 
+sig=df.noisy_signal
+
+## FFT (FAST FOURIER TRANSFORM) COMPUTATION AND PLOT##
+sr=70 #SAMPLE FREQUENCY
+ts=1.0/sr #SAMPLE INTERVAL
+
+from numpy.fft import fft,ifft
+sig=fft(sig)
+N=len(sig)
+n=np.arange(N)
+T=N/sr 
+freq=n/T
+
+plt.figure(figsize = (12, 6))
+plt.subplot(121)
+
+plt.stem(freq, np.abs(sig), 'b', \
+         markerfmt=" ", basefmt="-b")
+plt.xlabel('Freq (Hz)')
+plt.ylabel('FFT Amplitude |sig(freq)|')
+plt.xlim(0, 10)
+
+plt.subplot(122)
+plt.plot(time, ifft(sig), 'r')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude')
+plt.tight_layout()
+plt.show()
+
+
+## PSD (POWER SPECTRAL DENSITY) COMPUTATION AND PLOT ##
+sig_S=df.noisy_signal
+(f, S)=scipy.signal.periodogram(sig_S,sr,scaling="density")
+import matplotlib.pyplot as plt
+
+plt.semilogy(f, S)
+plt.ylim([1e-7, 1e2])
+plt.xlim([0,100])
+plt.xlabel('frequency [Hz]')
+plt.ylabel('PSD [V**2/Hz]')
+plt.show()
